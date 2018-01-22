@@ -9,7 +9,7 @@
 
 if [ -f "$1" ]; then
   tarball=$(echo $1 | cut -d'.' -f1-3)
-  gpg2 $1 && tar xzf $tarball && rm -f $1 $tarball
+  gpg2 $1 && tar xzf $tarball && rm -f $tarball #&& rm -f $1
 else
   echo "file $1 not found" 1>&2
 fi
