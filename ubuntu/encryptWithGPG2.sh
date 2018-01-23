@@ -1,12 +1,9 @@
 #!/bin/bash
 
-# This script will turn a directory into a tar ball
-# then encrypt it with gpg2 and ask you for a password
-# for it
+# This script will turn a file or directory into a tar ball, send it down the
+# pipe to gpg2, which will then ask you for a passphrase for it and encrypt it
 if [ -e $1 ]; then
-  tar czf "$1"'.tar.gz' $1 && gpg2 -c "$1"'.tar.gz' && \
-    #rm -rf $1 && \
-    rm "$1"'.tar.gz'
+  tar czf - $1 | gpg2 -c --output "$1.gpg" - 
 else
   echo "You must specify a valid directory as your argument" 1>&2
 fi
