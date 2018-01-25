@@ -3,10 +3,50 @@
 # This script will reverse the effects of the
 # encryptWithGPG2.sh script: use gpg2 to decrypt the file and send it to stdout
 # (in this case the pipeline), then extract the tar file contents into the
-# current directory
+# current directory, or in the directory 
 
-if [ -f "$1" ]; then
-  gpg2 -d $1 | tar xzf -
+
+# did you pass an argument?
+if [ ! -z "$1" ]; then
+
+  # do you want to delete the original?
+  destroy_original=false
+  if [ "$1" == '--destroy-original' ]; then
+    echo "original file will be destroyed"
+    destroy_original=true 
+    shift
+  fi
+
+  # did you provide a valid file?
+  if [ -f "$1" ]; then
+
+    # did you provide a destination?
+    if [ ! -z "$2" ]; then
+      echo "argument 2 exists: $2"
+
+      # is the destination a directory?
+      if [ -d "$2" ]; then
+        echo "got to the tar -C: $2"
+        gpg2 -d $1 | tar xzf - -C $2
+      else
+        echo "$2 needs to be a directory you can write to." 1>&2
+      fi
+
+    else
+      echo "could not detect argument 2: $2"
+      gpg2 -d $1 | tar xzf -
+    fi
+
+    # did you actually want to destroy the original?
+    if [ "$destroy_original" == true ]; then
+      echo 'destroying original...'
+      rm -f $1
+    fi
+
+  else
+    echo "file $1 not found" 1>&2
+  fi
+
 else
-  echo "file $1 not found" 1>&2
+  echo "you must provide an encrypted tarball as argument" 1>&2
 fi
