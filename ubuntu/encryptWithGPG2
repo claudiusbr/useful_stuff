@@ -5,7 +5,8 @@
 
 # did you pass an argument?
 if [ ! -z "$1" ]; then
-  echo "$1"
+  echo "origin: $1"
+  echo "destination: $2"
 
   # do you want to delete the original?
   destroy_original=false
@@ -17,7 +18,7 @@ if [ ! -z "$1" ]; then
 
 
   # did you provide a valid argument?
-  if [ -e $1 ]; then
+  if [ -e "$1" ]; then
 
     # did you provide a destination?
     if [ ! -z "$2" ]; then
@@ -26,23 +27,24 @@ if [ ! -z "$1" ]; then
       # is the destination a directory?
       if [ -d "$2" ]; then
         # does your directory name end with a '/'
-        dir=$2
+        dir="$2"
         dirlength=${#dir}
-        if [ ${dir:-1} == '/' ]; then
+        if [ ${dir:$dirlength-1} == '/' ]; then
           dir=${dir:0:$dirlength-1}
         fi
 
-        #echo "got to the tar -C: $2"
-        echo "saving encrypted file at $2/$1"
-        tar czf - $1 | gpg2 -c --output "$2/$1.gpg" - 
+        filename=$(echo $1 | rev | cut -d'/' -f1 | rev)
+
+        echo "saving output file as $dir/$filename.gpg"
+        tar czf - "$1" | gpg2 -c --output "$dir/$filename.gpg" - 
 
       else
         echo "$2 needs to be a directory you can write to." 1>&2
       fi
     else
       #echo "could not detect argument 2: $2"
-      echo "saving in current directory"
-      tar czf - $1 | gpg2 -c --output "$1.gpg" - 
+      echo "saving as '$1.gpg'"
+      tar czf - "$1" | gpg2 -c --output "$1.gpg" - 
     fi
 
   else
@@ -52,7 +54,7 @@ if [ ! -z "$1" ]; then
   # did you actually want to destroy the original?
   if [ "$destroy_original" == true ]; then
     echo 'destoying original...'
-    rm -rf $1
+    rm -rf "$1"
   fi
 
 else

@@ -27,20 +27,20 @@ if [ ! -z "$1" ]; then
       # is the destination a directory?
       if [ -d "$2" ]; then
         echo "got to the tar -C: $2"
-        gpg2 -d $1 | tar xzf - -C $2
+        gpg2 -d "$1" | tar xzf - -C "$2"
       else
         echo "$2 needs to be a directory you can write to." 1>&2
       fi
 
     else
       echo "could not detect argument 2: $2"
-      gpg2 -d $1 | tar xzf -
+      gpg2 -d "$1" | tar xzf -
     fi
 
     # did you actually want to destroy the original?
     if [ "$destroy_original" == true ]; then
       echo 'destroying original...'
-      rm -f $1
+      rm -f "$1"
     fi
 
   else
