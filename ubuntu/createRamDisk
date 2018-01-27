@@ -1,10 +1,8 @@
 #!/bin/bash
 
-# create a link to /dev/shm/{username}tmp in your home directory. I use this to
-# work on files which are encrypted on disk, in order to make sure that their
-# plain-text versions do not persist.  If your home folder is already
-# encrypted, even better -- this adds a 'second layer' of 'protection'.  since
-# this uses `mount` with options, you must be a sudoer to execute it
+# creates a /dev/shm/{username}tmp folder and makes a symlink to it in your
+# $HOME/etc/ directory. I use this to work on files which are encrypted on
+# disk, in order to make sure that their plain-text versions do not persist.
 if [ -e "/dev/shm" ]; then
   if [ ! -e "/dev/shm/$USER"'tmp' ]; then
     mkdir "/dev/shm/$USER"'tmp'
