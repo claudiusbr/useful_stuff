@@ -4,9 +4,8 @@
 # pipe to gpg2, which will then ask you for a passphrase for it and encrypt it
 
 # did you pass an argument?
+
 if [ ! -z "$1" ]; then
-  echo "origin: $1"
-  echo "destination: $2"
 
   # do you want to delete the original?
   destroy_original=false
@@ -16,6 +15,8 @@ if [ ! -z "$1" ]; then
     shift
   fi
 
+  echo "origin: $1"
+  echo "destination: $2"
 
   # did you provide a valid argument?
   if [ -e "$1" ]; then
@@ -27,36 +28,40 @@ if [ ! -z "$1" ]; then
       # is the destination a directory?
       if [ -d "$2" ]; then
         # does your directory name end with a '/'
-        dir="$2"
-        dirlength=${#dir}
-        if [ ${dir:$dirlength-1} == '/' ]; then
-          dir=${dir:0:$dirlength-1}
-        fi
+        dir=$(removeTrailingSlash $2)
 
-        filename=$(echo $1 | rev | cut -d'/' -f1 | rev)
+        echo "this is dir $dir"
+        filename="$(echo $(removeTrailingSlash "$1") | rev | cut -d'/' -f1 | rev).gpg"
+        echo "this is filename $filename"
 
-        echo "saving output file as $dir/$filename.gpg"
-        tar czf - "$1" | gpg2 -c --output "$dir/$filename.gpg" - 
-
+        echo "saving output file as $dir/$filename"
+        tar czf - "$1" | gpg2 -c --output "$dir/$filename" - 
+        
       else
         echo "$2 needs to be a directory you can write to." 1>&2
+        exit 1
       fi
     else
       #echo "could not detect argument 2: $2"
-      echo "saving as '$1.gpg'"
-      tar czf - "$1" | gpg2 -c --output "$1.gpg" - 
+      echo "this is 1 $1"
+      filename="$(removeTrailingSlash $1).gpg"
+      echo "this is filename $filename"
+      echo "saving as '$filename'"
+      tar czf - "$1" | gpg2 -c --output "$filename" - 
     fi
 
   else
     echo "You must specify a valid file or directory as your argument" 1>&2
+    exit 1
   fi
 
   # did you actually want to destroy the original?
-  if [ "$destroy_original" == true ]; then
+  if [[ "$destroy_original" == true && -e "$filename" ]]; then
     echo 'destoying original...'
     rm -rf "$1"
   fi
 
 else
   echo "you must provide a file or directory as an argument" 1>&2
+  exit 1
 fi

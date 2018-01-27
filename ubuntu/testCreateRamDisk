@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Tests for the createRamDisk script
+
+echo -n "testing if script is available..."
+if [ -z $(command -v createRamDisk) ]; then
+  echo "FAIL!" 1>&2
+  echo "  createRamDisk is not available -- is the repository in your PATH?"
+else
+  echo "OK!"
+fi

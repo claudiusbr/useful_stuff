@@ -1,0 +1,14 @@
+#!/bin/bash
+# these are functions which work along with the scripts in this folder
+
+# this script checks if its argument has a trailing '/'
+# and removes it if that is the case
+if [ ! -z "$1" ]; then
+  variable="$1"
+  vairable_length=${#variable}
+  if [ ${variable:$variable_length-1} == '/' ]; then
+    echo "${variable:0:$variable_length-1}"
+  else
+    echo "$1"
+  fi
+fi
