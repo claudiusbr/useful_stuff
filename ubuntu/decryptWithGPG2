@@ -20,6 +20,8 @@ if [ ! -z "$1" ]; then
   # did you provide a valid file?
   if [ -f "$1" ]; then
 
+    filename="$(echo $(removeTrailingSlash "$1") | rev | cut -d'/' -f1 | rev | cut -d'.' -f1)"
+
     # did you provide a destination?
     if [ ! -z "$2" ]; then
       echo "argument 2 exists: $2"
@@ -37,7 +39,6 @@ if [ ! -z "$1" ]; then
       fi
 
     else
-      echo "could not detect argument 2: $2"
       gpg2 -d "$1" | tar xzf -
     fi
 
