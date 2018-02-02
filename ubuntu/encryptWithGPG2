@@ -35,7 +35,7 @@ if [ ! -z "$1" ]; then
         echo "this is filename $filename"
 
         echo "saving output file as $dir/$filename"
-        tar czf - "$1" | gpg2 -c --output "$dir/$filename" - 
+        tar czf - "$1" | gpg2 --cipher-algo AES256 -c --output "$dir/$filename" - 
         
       else
         echo "$2 needs to be a directory you can write to." 1>&2
@@ -47,7 +47,7 @@ if [ ! -z "$1" ]; then
       filename="$(removeTrailingSlash $1).gpg"
       echo "this is filename $filename"
       echo "saving as '$filename'"
-      tar czf - "$1" | gpg2 -c --output "$filename" - 
+      tar czf - "$1" | gpg2 --cipher-algo AES256 -c --output "$filename" - 
     fi
 
   else
