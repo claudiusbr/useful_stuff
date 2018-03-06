@@ -18,8 +18,16 @@ object TextLineFilter {
         origin.filter(sentenceMatchesNoPatterns(_, regexPatterns)).foreach(pwriter.println))
   }
 
+
+  /**
+   * This function takes a sentence and a list of Regex patterns, and returns
+   * true if the sentence does not match any of the patterns in the list
+   * @param sentence a string
+   * @param regexPatterns a list of scala.util.matching.Regex patterns
+   */
   def sentenceMatchesNoPatterns(sentence: String, regexPatterns: List[scala.util.matching.Regex]): Boolean = 
     regexPatterns.map(_.findFirstIn(sentence) == None).reduce(_ && _)
+
 
   // based on https://stackoverflow.com/questions/24842257/how-do-i-create-a-custom-scala-library-using-sbt#24842389
   def writeToFile(file: java.io.File)(f: java.io.PrintWriter => Unit) {
