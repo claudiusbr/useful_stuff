@@ -1,6 +1,9 @@
 #!/bin/sh
 exec scala "$0" "$@"
 !#
+import scala.util.matching.Regex
+import scala.io.Source
+import java.io.{File,PrintWriter}
 /**
  * This scala script takes two filenames as arguments -- the first one being
  * the origin the other being the filter, respectively -- then iteratively
@@ -10,12 +13,12 @@ exec scala "$0" "$@"
 object TextLineFilter {
   def main(args: Array[String]) {
     if (argumentsAreValid(args)) {
-      val origin: List[String] = scala.io.Source.fromFile(args(0)).getLines().toList
-      val filter: List[String] = scala.io.Source.fromFile(args(1)).getLines().toList
+      val origin: List[String] = Source.fromFile(args(0)).getLines().toList
+      val filter: List[String] = Source.fromFile(args(1)).getLines().toList
 
-      val regexPatterns: List[scala.util.matching.Regex] = filter.map(str => s"${str}".r)
+      val regexPatterns: List[Regex] = filter.map(str => s"${str}".r)
 
-      writeToFile(new java.io.File(s"Filtered${args(0)}"))(pwriter =>
+      writeToFile(new File(s"Filtered${args(0)}"))(pwriter =>
           origin.filter(sentenceMatchesNoPatterns(_, regexPatterns)).foreach(pwriter.println))
     } else {
       println("Please check the arguments provided.")
@@ -56,15 +59,17 @@ object TextLineFilter {
    * @param sentence a string
    * @param regexPatterns a list of scala.util.matching.Regex patterns
    */
-  def sentenceMatchesNoPatterns(sentence: String, regexPatterns: List[scala.util.matching.Regex]): Boolean = {
+  def sentenceMatchesNoPatterns(sentence: String, regexPatterns: List[Regex]): Boolean = {
     println(sentence)
-    regexPatterns.map(_.findFirstIn(sentence) == None).reduce(_ && _)
+    regexPatterns.foldLeft(true)((b: Boolean, r: Regex) => {
+      b && (r.findFirstIn(sentence) == None)
+    })
   }
 
 
   // based on https://stackoverflow.com/questions/24842257/how-do-i-create-a-custom-scala-library-using-sbt#24842389
-  def writeToFile(file: java.io.File)(f: java.io.PrintWriter => Unit) {
-    val pwriter = new java.io.PrintWriter(file)
+  def writeToFile(file: File)(f: PrintWriter => Unit) {
+    val pwriter = new PrintWriter(file)
     try { 
       f(pwriter) 
     } finally { 
