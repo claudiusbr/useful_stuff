@@ -2,9 +2,26 @@
 
 # This script will turn a file or directory into a tar ball, send it down the
 # pipe to gpg2, which will then ask you for a passphrase for it and encrypt it
+#
+#
+# WARNING: if running this on an ssh session with tmux/byobu, the script might
+# fail due to it not being able to prompt for a passphrase. If this happens,
+# then try the steps below:
+# add the entries below to ~/.gnupg/gpg.conf:
+#  use-agent
+#  pinentry-mode loopback
+#
+# Then, enter the entry below into the ~/.gnupg/gpg-agent.conf file:
+#  allow-loopback-pinentry
+#
+# You may need to restart the agent with:
+# $ echo 'RELOADAGENT' | gpg-connect-agent
+#
+# afterwards, it should run with loopback and ask for a passphrase in your
+# current session/tty
+#
 
 # did you pass an argument?
-
 if [ ! -z "$1" ]; then
 
   # do you want to delete the original?
