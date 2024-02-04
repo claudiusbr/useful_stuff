@@ -3,7 +3,8 @@ Useful Stuff
 
 Things that I find useful, and that help in my day-to-day tasks -- a
 'toolbelt'.
-I'm mostly writing these things here because I set them up, then a week later they need maintenance, but I completely forgot how I wired everything together. I'll use this repo as my map to find my way home, hoping that it makes some sense to me when I need it.
+I'm mostly writing these things here because I set them up, then a week later they need maintenance, but I completely forgot how I wired everything together.
+Making it public in case it's useful to anyone who comes across it.
 
 # Using Grafana to monitor my laptop
 
